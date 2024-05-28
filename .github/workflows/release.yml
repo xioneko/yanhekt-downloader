@@ -1,0 +1,61 @@
+name: Release
+on:
+  workflow_dispatch:
+    inputs:
+      version_bump:
+        description: "How to bump the version number"
+        required: true
+        default: "patch"
+        type: choice
+        options:
+          - major
+          - minor
+          - patch
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+      - name: Install dependencies
+        run: npm i -g pnpm && pnpm i
+      - name: Generate release notes
+        id: generate_release_notes
+        run: |
+          OLD_VER=$(git tag -l --sort=-v:refname "v[0-9]*\.[0-9]*\.[0-9]*" | head -n 1)
+          REVISION="$([ -z $OLD_VER ] && echo HEAD || echo $OLD_VER..HEAD)"
+          feat_commits="$(git log --pretty=format:'%s (%h)' $REVISION | grep '^feat:' || true)"
+          fix_commits="$(git log --pretty=format:'%s (%h)' $REVISION | grep '^fix:' || true)"
+          touch release_notes.txt
+          if [[ -n "$feat_commits" ]]; then
+            echo -e "### ✨ Features\n" >> release_notes.txt
+            echo $feat_commits | sed 's/^feat:/\* /' >> release_notes.txt
+          fi
+          if [[ -n "$fix_commits" ]]; then
+            echo -e "\n### 🐛 Bug fixes\n" >> release_notes.txt
+            echo $fix_commits | sed 's/^fix:/\* /' >> release_notes.txt
+          fi
+      - name: Bump version
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          pnpm version ${{ inputs.version_bump }} -m "Release %s"
+          git push --follow-tags
+          echo "latest_version_tag=$(git describe --tags --abbrev=0)" >> $GITHUB_ENV
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build userscript
+        run: pnpm build:prod
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
+          tag_name: ${{ env.latest_version_tag }}
+          body_path: release_notes.txt
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          latest_version_tag: ${{ env.latest_version_tag }}

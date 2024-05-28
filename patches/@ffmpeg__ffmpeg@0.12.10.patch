@@ -1,0 +1,23 @@
+diff --git a/dist/esm/classes.js b/dist/esm/classes.js
+index e490b7ab061874fa244046b227c449c653e98934..0c51adb42315094c86a8dde9761c672b8bea049b 100644
+--- a/dist/esm/classes.js
++++ b/dist/esm/classes.js
+@@ -1,6 +1,7 @@
+ import { FFMessageType } from "./const.js";
+ import { getMessageID } from "./utils.js";
+ import { ERROR_TERMINATED, ERROR_NOT_LOADED } from "./errors.js";
++import _Worker from './worker.js?worker&inline'
+ /**
+  * Provides APIs to interact with ffmpeg web worker.
+  *
+@@ -106,9 +107,7 @@ export class FFmpeg {
+                 }) :
+                 // We need to duplicated the code here to enable webpack
+                 // to bundle worekr.js here.
+-                new Worker(new URL("./worker.js", import.meta.url), {
+-                    type: "module",
+-                });
++                new _Worker();
+             this.#registerHandlers();
+         }
+         return this.#send({

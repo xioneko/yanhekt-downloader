@@ -1,0 +1,50 @@
+{
+  "name": "yanhekt-downloader",
+  "version": "0.1.0",
+  "description": "A userscript to download yanhekt's videos",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build:dev": "vite build -m \"development\"",
+    "build:watch": "pnpm build:dev --watch",
+    "build:prod": "vite build -m \"production\"",
+    "pretest": "pnpm build:prod",
+    "test": "playwright test --headed",
+    "prepare": "husky"
+  },
+  "author": "xioneko",
+  "license": "MIT",
+  "dependencies": {
+    "@ffmpeg/ffmpeg": "^0.12.10",
+    "@ffmpeg/util": "^0.12.1",
+    "@solid-primitives/refs": "^1.0.8",
+    "@solid-primitives/transition-group": "^1.0.5",
+    "solid-js": "^1.8.17"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.44.1",
+    "@types/node": "^20",
+    "@unocss/eslint-config": "^0.60.3",
+    "dotenv": "^16.4.5",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-solid": "^0.14.0",
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.5",
+    "prettier": "^3.2.5",
+    "rollup": "^4.17.2",
+    "typescript-eslint": "^7.7.1",
+    "unocss": "^0.60.2",
+    "vite": "^5.2.10",
+    "vite-plugin-solid": "^2.10.2"
+  },
+  "pnpm": {
+    "patchedDependencies": {
+      "@ffmpeg/ffmpeg@0.12.10": "patches/@ffmpeg__ffmpeg@0.12.10.patch"
+    }
+  },
+  "lint-staged": {
+    "*": "prettier --ignore-unknwon --check --write",
+    "*.{js,jsx,ts,tsx}": "eslint --cache --no-warn-ignored"
+  }
+}

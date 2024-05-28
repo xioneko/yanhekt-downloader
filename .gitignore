@@ -1,0 +1,14 @@
+dist/
+node_modules/
+.env*.local
+.DS_Store
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/
+.eslintcache
