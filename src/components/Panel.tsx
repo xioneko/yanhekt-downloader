@@ -41,7 +41,7 @@ export const TaskCreatePanel: Component<{
       }}
     >
       <div
-        class="fixed top-0 h-full w-full flex items-center justify-center bg-black bg-opacity-50 transition-opacity duration-300 ease-out"
+        class="fixed top-0 z-24 h-full w-full flex items-center justify-center bg-black bg-opacity-50 transition-opacity duration-300 ease-out"
         classList={{
           "opacity-0": fade(),
         }}
@@ -101,8 +101,8 @@ export const TaskCreatePanel: Component<{
             </FormItem>
             <FormItem label="自动转码">
               <RadioButtonGroup name="autoTranscode">
-                <RadioButton label="是" value="on" checked />
-                <RadioButton label="否" value="off" />
+                <RadioButton label="是" value="on" />
+                <RadioButton label="否" value="off" checked />
               </RadioButtonGroup>
             </FormItem>
             <button
