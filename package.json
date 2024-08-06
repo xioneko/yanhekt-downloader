@@ -1,6 +1,6 @@
 {
   "name": "yanhekt-downloader",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A userscript to download yanhekt's videos",
   "private": true,
   "type": "module",
