@@ -1,6 +1,7 @@
 import type { Plugin } from "vite"
 import type { OutputAsset, OutputChunk } from "rollup"
 import path from "node:path"
+import url from "node:url"
 
 export default (): Plugin[] => {
   let rootDir!: string
@@ -33,7 +34,9 @@ export default (): Plugin[] => {
       },
       async generateBundle(options, bundle) {
         const metadata = (
-          await import(path.resolve(rootDir, "metadata.js")).catch((err) => {
+          await import(
+            url.pathToFileURL(path.resolve(rootDir, "metadata.js")).toString()
+          ).catch((err) => {
             console.error("Failed to load metadata.js in root directory")
             throw err
           })
