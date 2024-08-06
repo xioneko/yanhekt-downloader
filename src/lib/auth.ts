@@ -13,37 +13,39 @@ export async function encryptUrlWithAuth(
   const params = await createAuthParams(refreshToken)
 
   return `${url}?${params}`
-}
 
-async function createAuthParams(refreshToken: boolean) {
-  if (!AthuParams.token || refreshToken) {
-    await AthuParams.refreshToken()
+  async function createAuthParams(refreshToken: boolean) {
+    if (!AuthParams.token || refreshToken) {
+      await AuthParams.refreshToken()
+    }
+
+    const timestamp = encrypt().t()
+    // prettier-ignore
+    return "Xvideo_Token=" + AuthParams.token
+      + "&Xclient_Timestamp=" + timestamp
+      + "&Xclient_Signature=" + encrypt().s(timestamp)
+      + "&Xclient_Version=" + encrypt().v()
+      + "&Platform=yhkt_user"
   }
-
-  const timestamp = encrypt().t()
-  // prettier-ignore
-  return "Xvideo_Token=" + AthuParams.token
-    + "&Xclient_Timestamp=" + timestamp
-    + "&Xclient_Signature=" + encrypt().s(timestamp)
-    + "&Xclient_Version=" + encrypt().v()
-        + "&Platform=yhkt_user"
 }
 
-namespace AthuParams {
+namespace AuthParams {
   export let token: string
   export const refreshToken = throttle(async () => {
-    token = await getToken()
+    token = await getVideoToken()
   }, 1000)
 }
 
-async function getToken(): Promise<string> {
+async function getVideoToken(): Promise<string> {
   const response = await fetch(
     "https://cbiz.yanhekt.cn/v1/auth/video/token?id=0",
     {
       headers: {
-        accept: "application/json, text/plain, */*",
-        "content-type": "application/json",
-        "xdomain-client": "web_user",
+        Authorization: `Bearer ${getAuthToken()}`,
+        "Xdomain-Client": "web_user",
+        "xclient-timestamp": encrypt().t(),
+        "xclient-signature": encrypt().s(),
+        "xclient-version": encrypt().v(),
       },
     },
   )
@@ -52,18 +54,22 @@ async function getToken(): Promise<string> {
   return body["data"]["token"]
 }
 
+export function getAuthToken(): string {
+  // eslint-disable-next-line
+  const token = JSON.parse(localStorage.auth ?? "{}").token
+  if (!token) throw new Error("获取身份认证信息失败")
+
+  return token as string
+}
+
 function throttle<T>(func: () => Promise<T>, wait: number): () => Promise<T> {
   let result: Promise<T> | undefined
   return () => {
     if (result !== undefined) {
       return result
     }
-    result = new Promise((resolve) => {
-      setTimeout(() => {
-        void func().then(resolve)
-        result = undefined
-      }, wait)
-    })
+    result = func()
+    setTimeout(() => (result = undefined), wait)
     return result
   }
 }

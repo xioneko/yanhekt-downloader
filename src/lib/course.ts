@@ -1,4 +1,5 @@
-import { encryptUrlWithAuth } from "./auth"
+import { encryptUrlWithAuth, getAuthToken } from "./auth"
+import encrypt from "./encrypt"
 
 export interface CourseVideo {
   course_id: number
@@ -57,7 +58,13 @@ export async function fetchCourseVideos(
   const res = await fetch(
     `https://cbiz.yanhekt.cn/v2/course/session/list?course_id=${courseId}`,
     {
-      headers: { "xdomain-client": "web_user" },
+      headers: {
+        Authorization: `Bearer ${getAuthToken()}`,
+        "Xdomain-Client": "web_user",
+        "xclient-timestamp": encrypt().t(),
+        "xclient-signature": encrypt().s(),
+        "xclient-version": encrypt().v(),
+      },
     },
   )
   const { data: courses } = await res.json()

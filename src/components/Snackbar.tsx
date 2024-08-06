@@ -166,8 +166,17 @@ export const TaskSnackbar: Component<{
 
     async function resolveVideoUrl() {
       if (!courseVideos) {
-        courseVideos = await fetchCourseVideos(props.task.courseId)
-        console.log(courseVideos)
+        try {
+          courseVideos = await fetchCourseVideos(props.task.courseId)
+          console.log(courseVideos)
+        } catch (err) {
+          console.log("%c[Downloading]", "color: red", err)
+          setState({
+            status: "error",
+            type: "download",
+            message: "获取课程视频地址失败",
+          })
+        }
       }
       const {
         videos: [videoDetail],
