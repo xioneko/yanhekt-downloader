@@ -1,4 +1,4 @@
-import encrypt from "./encrypt"
+import encrypt from "./encrypt-v2"
 
 /**
  * Example: 将 ".../Video1/Video1.m3u8" 变为 ".../Video1/a97f12c055a10ee51d60e441e618bfef/Video.m3u8?Xvideo_Token=..."
