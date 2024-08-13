@@ -1,5 +1,5 @@
 import { encryptUrlWithAuth, getAuthToken } from "./auth"
-import encrypt from "./encrypt"
+import encrypt from "./encrypt-v2"
 
 export interface CourseVideo {
   course_id: number
