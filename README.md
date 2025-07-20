@@ -1,3 +1,6 @@
+> [!WARNING]
+> 当前项目已停止维护，如果你有兴趣接手，欢迎 fork 并继续开发，或者成为本项目的新维护者
+
 <div align="center">
   <img src="docs/yanhekt.svg" alt="yanhekt" height="88">
 </div>
